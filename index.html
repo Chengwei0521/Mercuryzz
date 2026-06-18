@@ -59,7 +59,7 @@
 
       async function loadMessage() {
         const response = await fetch(
-          `${SUPABASE_URL}/rest/v1/messages?select=text&order=id.asc&limit=1`,
+          `${SUPABASE_URL}/rest/v1/messages?select=text&order=id.desc&limit=1`,
           {
             headers: {
               apikey: SUPABASE_KEY,
