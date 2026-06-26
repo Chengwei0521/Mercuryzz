@@ -816,13 +816,26 @@
       }
 
       function bindDrag(card) {
-        let ghost = null;
-        let origin = null;
-        let pointerId = null;
+        let drag = null;
+
+        function cleanupDrag() {
+          if (!drag) {
+            return;
+          }
+
+          drag.ghost.remove();
+          drag.card.classList.remove("dragging");
+          elements.enemyPortrait.classList.remove("targeted");
+          clearTargetLine();
+          document.removeEventListener("pointermove", onPointerMove);
+          document.removeEventListener("pointerup", onPointerUp);
+          document.removeEventListener("pointercancel", onPointerCancel);
+          drag = null;
+        }
 
         function moveGhost(point) {
-          ghost.style.transform = `translate(${point.x}px, ${point.y}px) translate(-50%, -50%) rotate(-4deg) scale(1.08)`;
-          drawTargetLine(origin, point);
+          drag.ghost.style.transform = `translate(${point.x}px, ${point.y}px) translate(-50%, -50%) rotate(-4deg) scale(1.08)`;
+          drawTargetLine(drag.origin, point);
 
           elements.enemyPortrait.classList.toggle(
             "targeted",
@@ -830,60 +843,56 @@
           );
         }
 
-        card.addEventListener("pointerdown", (event) => {
-          if (state.locked || state.health <= 0 || event.button !== 0) {
-            return;
-          }
-
-          pointerId = event.pointerId;
-          card.setPointerCapture(pointerId);
-          origin = centerOf(card);
-          ghost = card.cloneNode(true);
-          ghost.classList.add("drag-ghost");
-          document.body.append(ghost);
-          card.classList.add("dragging");
-          elements.targetLine.classList.add("active");
-          moveGhost({ x: event.clientX, y: event.clientY });
-        });
-
-        card.addEventListener("pointermove", (event) => {
-          if (!ghost || event.pointerId !== pointerId) {
+        function onPointerMove(event) {
+          if (!drag) {
             return;
           }
 
           moveGhost({ x: event.clientX, y: event.clientY });
-        });
+        }
 
-        card.addEventListener("pointerup", async (event) => {
-          if (!ghost || event.pointerId !== pointerId) {
+        async function onPointerUp(event) {
+          if (!drag) {
             return;
           }
 
           const dropPoint = { x: event.clientX, y: event.clientY };
           const hit = isPointInElement(dropPoint, elements.enemyPortrait);
-          ghost.remove();
-          ghost = null;
-          card.classList.remove("dragging");
-          clearTargetLine();
-          elements.enemyPortrait.classList.remove("targeted");
+          const origin = drag.origin;
+          const activeCard = drag.card;
+          cleanupDrag();
 
           if (!hit) {
             return;
           }
 
-          card.classList.add("hidden");
+          activeCard.classList.add("hidden");
           elements.handSlot.innerHTML = "";
-          await castFireball(dropPoint);
-        });
+          await castFireball(origin);
+        }
 
-        card.addEventListener("pointercancel", () => {
-          if (ghost) {
-            ghost.remove();
+        function onPointerCancel() {
+          cleanupDrag();
+        }
+
+        card.addEventListener("pointerdown", (event) => {
+          if (state.locked || state.health <= 0 || event.button !== 0) {
+            return;
           }
-          ghost = null;
-          card.classList.remove("dragging");
-          elements.enemyPortrait.classList.remove("targeted");
-          clearTargetLine();
+
+          drag = {
+            card,
+            ghost: card.cloneNode(true),
+            origin: centerOf(card),
+          };
+          drag.ghost.classList.add("drag-ghost");
+          document.body.append(drag.ghost);
+          card.classList.add("dragging");
+          elements.targetLine.classList.add("active");
+          document.addEventListener("pointermove", onPointerMove);
+          document.addEventListener("pointerup", onPointerUp);
+          document.addEventListener("pointercancel", onPointerCancel);
+          moveGhost({ x: event.clientX, y: event.clientY });
         });
       }
 
