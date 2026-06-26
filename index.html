@@ -3,89 +3,617 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mercuryzz</title>
+    <title>Mercuryzz Fireball Loop</title>
     <style>
       :root {
-        color-scheme: light;
+        color-scheme: dark;
         font-family:
           Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
           "Segoe UI", sans-serif;
-        background: #f7f5ef;
-        color: #17211b;
+        background: #151816;
+        color: #f8f1df;
+      }
+
+      * {
+        box-sizing: border-box;
       }
 
       body {
         margin: 0;
         min-height: 100vh;
+        background:
+          radial-gradient(circle at 24% 20%, rgba(255, 166, 66, 0.22), transparent 28%),
+          linear-gradient(135deg, #182019 0%, #241c17 48%, #111715 100%);
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .game {
+        min-height: 100vh;
         display: grid;
-        place-items: center;
+        grid-template-rows: auto 1fr auto;
+        gap: 18px;
+        padding: 20px;
       }
 
-      main {
-        width: min(640px, calc(100% - 40px));
+      .topbar,
+      .hand {
+        width: min(1120px, 100%);
+        margin: 0 auto;
       }
 
-      p {
-        margin: 0 0 12px;
-        color: #4e5d53;
-        font-size: 15px;
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .title {
+        min-width: 0;
+      }
+
+      .title p,
+      .metric span,
+      .card small,
+      .log-line {
+        color: #d7c9a6;
+      }
+
+      .title p {
+        margin: 0 0 6px;
+        font-size: 14px;
       }
 
       h1 {
         margin: 0;
-        font-size: clamp(40px, 7vw, 84px);
+        font-size: clamp(28px, 4vw, 54px);
         line-height: 1;
         letter-spacing: 0;
       }
 
-      .status {
-        margin-top: 24px;
-        min-height: 20px;
+      .metrics {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .metric {
+        min-width: 108px;
+        padding: 10px 12px;
+        border: 1px solid rgba(255, 241, 198, 0.2);
+        background: rgba(12, 16, 13, 0.5);
+      }
+
+      .metric strong,
+      .metric span {
+        display: block;
+      }
+
+      .metric strong {
+        font-size: 22px;
+        line-height: 1.1;
+      }
+
+      .metric span {
+        margin-top: 3px;
+        font-size: 12px;
+      }
+
+      .board {
+        width: min(1120px, 100%);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(240px, 320px) minmax(260px, 1fr);
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .hero,
+      .side {
+        border: 1px solid rgba(255, 241, 198, 0.2);
+        background: rgba(12, 16, 13, 0.62);
+        min-height: 360px;
+      }
+
+      .hero {
+        display: grid;
+        place-items: center;
+        padding: 22px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .portrait {
+        width: min(240px, 72vw);
+        aspect-ratio: 3 / 4;
+        display: grid;
+        place-items: center;
+        position: relative;
+        border: 3px solid #d6ad58;
+        border-radius: 50% 50% 42% 42%;
+        background:
+          radial-gradient(circle at 50% 22%, #ffe5a3 0 10%, transparent 11%),
+          linear-gradient(160deg, #3a71a1, #6a4021 55%, #24140e);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      .portrait::before,
+      .portrait::after {
+        content: "";
+        position: absolute;
+        border-radius: 999px;
+      }
+
+      .portrait::before {
+        width: 44%;
+        height: 28%;
+        top: 15%;
+        background: #f4d59a;
+        box-shadow:
+          -42px 22px 0 -14px #f4d59a,
+          42px 22px 0 -14px #f4d59a;
+      }
+
+      .portrait::after {
+        width: 68%;
+        height: 26%;
+        bottom: 15%;
+        background: linear-gradient(90deg, #e9ba58, #fff0ad, #e9ba58);
+        opacity: 0.95;
+      }
+
+      .minion-name {
+        position: absolute;
+        bottom: 20px;
+        left: 18px;
+        right: 18px;
+        text-align: center;
+        padding: 9px 10px;
+        border: 1px solid rgba(255, 241, 198, 0.32);
+        background: rgba(23, 17, 12, 0.82);
+        font-weight: 800;
+      }
+
+      .side {
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .enemy {
+        padding: 22px;
+        border-bottom: 1px solid rgba(255, 241, 198, 0.16);
+      }
+
+      .enemy-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .enemy h2 {
+        margin: 0;
+        font-size: clamp(24px, 4vw, 48px);
+        letter-spacing: 0;
+      }
+
+      .health {
+        display: grid;
+        place-items: center;
+        width: 88px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 35% 35%, #ffb0a1, transparent 32%),
+          linear-gradient(145deg, #b3192b, #5c0811);
+        border: 3px solid #f1c46d;
+        font-size: 30px;
+        font-weight: 900;
+        box-shadow: 0 12px 28px rgba(94, 5, 12, 0.45);
+      }
+
+      .bar {
+        height: 18px;
+        margin-top: 18px;
+        border: 1px solid rgba(255, 241, 198, 0.24);
+        background: #2d1918;
+        overflow: hidden;
+      }
+
+      .bar-fill {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, #dc2d3c, #ff9b3d);
+        transition: width 180ms ease;
+      }
+
+      .activity {
+        display: grid;
+        grid-template-columns: 1fr minmax(190px, 250px);
+        gap: 16px;
+        padding: 22px;
+      }
+
+      .spell-zone {
+        min-height: 210px;
+        display: grid;
+        place-items: center;
+        border: 1px dashed rgba(255, 241, 198, 0.22);
+        background:
+          radial-gradient(circle, rgba(251, 101, 31, 0.18), transparent 52%),
+          rgba(247, 184, 77, 0.04);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .blast {
+        width: 132px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        transform: scale(0.35);
+        opacity: 0;
+        background:
+          radial-gradient(circle at 45% 40%, #fff6b7 0 12%, #ffb23e 13% 42%, #db351e 43% 68%, transparent 69%),
+          conic-gradient(from 10deg, #ffef8a, #f04a24, #ffb23e, #ffef8a);
+      }
+
+      .blast.active {
+        animation: blast 260ms ease-out;
+      }
+
+      @keyframes blast {
+        0% {
+          opacity: 0;
+          transform: scale(0.3);
+        }
+        45% {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.7);
+        }
+      }
+
+      .log {
+        min-height: 210px;
+        padding: 12px;
+        border: 1px solid rgba(255, 241, 198, 0.16);
+        background: rgba(6, 8, 7, 0.34);
+        overflow: hidden;
+      }
+
+      .log-line {
+        margin: 0 0 8px;
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .hand {
+        display: grid;
+        grid-template-columns: minmax(220px, 280px) 1fr auto;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .card {
+        min-height: 240px;
+        border: 3px solid #e3b65f;
+        background:
+          radial-gradient(circle at 50% 32%, #fff3a6 0 10%, #fa8d2f 11% 34%, transparent 35%),
+          linear-gradient(160deg, #8f1f16, #412118 62%, #17110e);
+        padding: 16px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42);
+      }
+
+      .cost {
+        width: 44px;
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: #0e1822;
+        background: linear-gradient(145deg, #9ee3ff, #2d79c4);
+        font-weight: 900;
+        font-size: 24px;
+        border: 2px solid #e8fbff;
+      }
+
+      .card h2 {
+        align-self: end;
+        margin: 0;
+        font-size: 30px;
+      }
+
+      .card small {
         font-size: 14px;
-        color: #657168;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .primary,
+      .secondary {
+        min-height: 48px;
+        border: 0;
+        padding: 0 18px;
+        cursor: pointer;
+        font-weight: 800;
+      }
+
+      .primary {
+        color: #27130d;
+        background: linear-gradient(180deg, #ffd36b, #f27a22);
+      }
+
+      .secondary {
+        color: #f8f1df;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 241, 198, 0.2);
+      }
+
+      .primary:disabled,
+      .secondary:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      @media (max-width: 760px) {
+        .game {
+          padding: 14px;
+        }
+
+        .topbar,
+        .board,
+        .hand,
+        .activity {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar,
+        .enemy-head {
+          align-items: flex-start;
+        }
+
+        .topbar,
+        .enemy-head,
+        .controls {
+          flex-direction: column;
+        }
+
+        .metrics {
+          justify-content: stretch;
+          width: 100%;
+        }
+
+        .metric {
+          flex: 1;
+        }
+
+        .hero,
+        .side {
+          min-height: auto;
+        }
+
+        .hand {
+          align-items: stretch;
+        }
       }
     </style>
   </head>
   <body>
-    <main>
-      <p>Mercuryzz Supabase test</p>
-      <h1 id="message">Loading...</h1>
-      <div class="status" id="status"></div>
+    <main class="game">
+      <header class="topbar">
+        <div class="title">
+          <p>Zero-cost spell loop</p>
+          <h1>Fireball vs 600 Health</h1>
+        </div>
+        <div class="metrics">
+          <div class="metric">
+            <strong id="casts">0</strong>
+            <span>spells cast</span>
+          </div>
+          <div class="metric">
+            <strong id="damage">0</strong>
+            <span>damage dealt</span>
+          </div>
+          <div class="metric">
+            <strong id="needed">100</strong>
+            <span>fireballs needed</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="board" aria-label="Game board">
+        <div class="hero">
+          <div class="portrait" aria-hidden="true"></div>
+          <div class="minion-name">Archmage Antonidas</div>
+        </div>
+
+        <div class="side">
+          <section class="enemy" aria-label="Opponent">
+            <div class="enemy-head">
+              <div>
+                <p>Opponent hero</p>
+                <h2>Training Dummy</h2>
+              </div>
+              <div class="health" id="health">600</div>
+            </div>
+            <div class="bar" aria-hidden="true">
+              <div class="bar-fill" id="healthBar"></div>
+            </div>
+          </section>
+
+          <section class="activity">
+            <div class="spell-zone" aria-label="Spell animation">
+              <div class="blast" id="blast"></div>
+            </div>
+            <div class="log" id="log" aria-live="polite">
+              <p class="log-line">Archmage Antonidas is ready.</p>
+              <p class="log-line">Cast Fireball to deal 6 damage.</p>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="hand" aria-label="Hand">
+        <article class="card">
+          <div class="cost">0</div>
+          <h2>Fireball</h2>
+          <small>Deal 6 damage. Antonidas adds another Fireball to your hand.</small>
+        </article>
+        <div class="controls">
+          <button class="primary" id="castButton">Cast Fireball</button>
+          <button class="secondary" id="autoButton">Auto Cast</button>
+          <button class="secondary" id="resetButton">Reset</button>
+        </div>
+        <div class="metric">
+          <strong id="handCount">1</strong>
+          <span>fireballs in hand</span>
+        </div>
+      </section>
     </main>
 
     <script>
-      const SUPABASE_URL = "https://jgigvgysiykcyclxvjpn.supabase.co";
-      const SUPABASE_KEY = "sb_publishable_RIVvsx8W5ejVCHcHJBdTIQ_0kPwH-_k";
+      const maxHealth = 600;
+      const fireballDamage = 6;
 
-      async function loadMessage() {
-        const response = await fetch(
-          `${SUPABASE_URL}/rest/v1/messages?select=text&order=id.desc&limit=1`,
-          {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: `Bearer ${SUPABASE_KEY}`,
-            },
-          },
-        );
+      const state = {
+        health: maxHealth,
+        casts: 0,
+        damage: 0,
+        hand: 1,
+        autoTimer: null,
+        defeatedLogged: false,
+      };
 
-        if (!response.ok) {
-          throw new Error(`Supabase returned ${response.status}`);
+      const elements = {
+        health: document.getElementById("health"),
+        healthBar: document.getElementById("healthBar"),
+        casts: document.getElementById("casts"),
+        damage: document.getElementById("damage"),
+        needed: document.getElementById("needed"),
+        handCount: document.getElementById("handCount"),
+        castButton: document.getElementById("castButton"),
+        autoButton: document.getElementById("autoButton"),
+        resetButton: document.getElementById("resetButton"),
+        log: document.getElementById("log"),
+        blast: document.getElementById("blast"),
+      };
+
+      function addLog(text) {
+        const line = document.createElement("p");
+        line.className = "log-line";
+        line.textContent = text;
+        elements.log.prepend(line);
+
+        while (elements.log.children.length > 7) {
+          elements.log.lastElementChild.remove();
         }
-
-        const rows = await response.json();
-        return rows[0]?.text ?? "No message found";
       }
 
-      loadMessage()
-        .then((message) => {
-          document.getElementById("message").textContent = message;
-          document.getElementById("status").textContent =
-            "Loaded from Supabase";
-        })
-        .catch((error) => {
-          document.getElementById("message").textContent = "Unable to load";
-          document.getElementById("status").textContent = error.message;
-        });
+      function updateView() {
+        elements.health.textContent = state.health;
+        elements.casts.textContent = state.casts;
+        elements.damage.textContent = state.damage;
+        elements.handCount.textContent = state.hand;
+        elements.needed.textContent = Math.ceil(state.health / fireballDamage);
+        elements.healthBar.style.width = `${(state.health / maxHealth) * 100}%`;
+
+        const defeated = state.health <= 0;
+        elements.castButton.disabled = defeated;
+        elements.autoButton.disabled = defeated;
+        elements.autoButton.textContent = state.autoTimer ? "Stop Auto" : "Auto Cast";
+
+        if (defeated) {
+          stopAuto();
+          if (!state.defeatedLogged) {
+            state.defeatedLogged = true;
+            addLog("Opponent defeated.");
+          }
+        }
+      }
+
+      function animateBlast() {
+        elements.blast.classList.remove("active");
+        void elements.blast.offsetWidth;
+        elements.blast.classList.add("active");
+      }
+
+      function castFireball() {
+        if (state.health <= 0 || state.hand < 1) {
+          return;
+        }
+
+        state.hand -= 1;
+        state.casts += 1;
+        const damage = Math.min(fireballDamage, state.health);
+        state.damage += damage;
+        state.health -= damage;
+        state.hand += 1;
+
+        animateBlast();
+        addLog(`Fireball ${state.casts}: ${damage} damage. Antonidas adds a new Fireball.`);
+        updateView();
+      }
+
+      function startAuto() {
+        if (state.autoTimer || state.health <= 0) {
+          return;
+        }
+
+        castFireball();
+        state.autoTimer = window.setInterval(castFireball, 140);
+        updateView();
+      }
+
+      function stopAuto() {
+        if (!state.autoTimer) {
+          return;
+        }
+
+        window.clearInterval(state.autoTimer);
+        state.autoTimer = null;
+        updateView();
+      }
+
+      function toggleAuto() {
+        if (state.autoTimer) {
+          stopAuto();
+          return;
+        }
+
+        startAuto();
+      }
+
+      function resetGame() {
+        stopAuto();
+        state.health = maxHealth;
+        state.casts = 0;
+        state.damage = 0;
+        state.hand = 1;
+        state.defeatedLogged = false;
+        elements.log.innerHTML = "";
+        addLog("Cast Fireball to deal 6 damage.");
+        addLog("Archmage Antonidas is ready.");
+        updateView();
+      }
+
+      elements.castButton.addEventListener("click", castFireball);
+      elements.autoButton.addEventListener("click", toggleAuto);
+      elements.resetButton.addEventListener("click", resetGame);
+
+      updateView();
     </script>
   </body>
 </html>
