@@ -10,8 +10,8 @@
         font-family:
           Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
           "Segoe UI", sans-serif;
-        background: #151816;
-        color: #f8f1df;
+        background: #12100d;
+        color: #fff2d2;
       }
 
       * {
@@ -21,9 +21,10 @@
       body {
         margin: 0;
         min-height: 100vh;
+        overflow-x: hidden;
         background:
-          radial-gradient(circle at 24% 20%, rgba(255, 166, 66, 0.22), transparent 28%),
-          linear-gradient(135deg, #182019 0%, #241c17 48%, #111715 100%);
+          radial-gradient(circle at 50% 0%, rgba(255, 178, 77, 0.2), transparent 34%),
+          linear-gradient(180deg, #1d1711 0%, #31200f 44%, #12100d 100%);
       }
 
       button {
@@ -34,455 +35,602 @@
         min-height: 100vh;
         display: grid;
         grid-template-rows: auto 1fr auto;
-        gap: 18px;
-        padding: 20px;
+        gap: 12px;
+        padding: 14px;
+        position: relative;
+        user-select: none;
       }
 
-      .topbar,
-      .hand {
-        width: min(1120px, 100%);
+      .hud,
+      .table,
+      .hand-row {
+        width: min(1180px, 100%);
         margin: 0 auto;
       }
 
-      .topbar {
+      .hud {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
+        gap: 12px;
+        min-height: 72px;
       }
 
-      .title {
-        min-width: 0;
-      }
-
-      .title p,
-      .metric span,
-      .card small,
-      .log-line {
-        color: #d7c9a6;
-      }
-
-      .title p {
-        margin: 0 0 6px;
-        font-size: 14px;
-      }
-
-      h1 {
+      .brand p,
+      .stat span,
+      .history p {
         margin: 0;
-        font-size: clamp(28px, 4vw, 54px);
+        color: #dac28f;
+      }
+
+      .brand h1 {
+        margin: 3px 0 0;
+        font-size: clamp(25px, 4vw, 46px);
         line-height: 1;
         letter-spacing: 0;
       }
 
-      .metrics {
+      .brand p {
+        font-size: 13px;
+      }
+
+      .stats {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         flex-wrap: wrap;
         justify-content: flex-end;
       }
 
-      .metric {
-        min-width: 108px;
-        padding: 10px 12px;
-        border: 1px solid rgba(255, 241, 198, 0.2);
-        background: rgba(12, 16, 13, 0.5);
+      .stat {
+        min-width: 92px;
+        padding: 8px 10px;
+        border: 1px solid rgba(255, 218, 144, 0.24);
+        background: rgba(18, 13, 8, 0.68);
+        box-shadow: inset 0 0 18px rgba(255, 205, 111, 0.06);
       }
 
-      .metric strong,
-      .metric span {
+      .stat strong,
+      .stat span {
         display: block;
       }
 
-      .metric strong {
+      .stat strong {
         font-size: 22px;
-        line-height: 1.1;
+        line-height: 1;
       }
 
-      .metric span {
-        margin-top: 3px;
-        font-size: 12px;
+      .stat span {
+        margin-top: 4px;
+        font-size: 11px;
       }
 
-      .board {
-        width: min(1120px, 100%);
-        margin: 0 auto;
+      .table {
+        min-height: 590px;
+        border: 3px solid #7e5525;
+        border-radius: 26px;
+        background:
+          radial-gradient(ellipse at 50% 50%, rgba(212, 151, 62, 0.24), transparent 42%),
+          radial-gradient(ellipse at 50% 50%, #6b431d 0%, #36210e 60%, #1b130d 100%);
+        box-shadow:
+          inset 0 0 0 8px rgba(255, 221, 146, 0.08),
+          inset 0 0 54px rgba(0, 0, 0, 0.55),
+          0 26px 70px rgba(0, 0, 0, 0.38);
         display: grid;
-        grid-template-columns: minmax(240px, 320px) minmax(260px, 1fr);
-        gap: 18px;
-        align-items: stretch;
-      }
-
-      .hero,
-      .side {
-        border: 1px solid rgba(255, 241, 198, 0.2);
-        background: rgba(12, 16, 13, 0.62);
-        min-height: 360px;
-      }
-
-      .hero {
-        display: grid;
-        place-items: center;
-        padding: 22px;
+        grid-template-rows: 210px 1fr;
         position: relative;
         overflow: hidden;
       }
 
-      .portrait {
-        width: min(240px, 72vw);
-        aspect-ratio: 3 / 4;
-        display: grid;
-        place-items: center;
-        position: relative;
-        border: 3px solid #d6ad58;
-        border-radius: 50% 50% 42% 42%;
-        background:
-          radial-gradient(circle at 50% 22%, #ffe5a3 0 10%, transparent 11%),
-          linear-gradient(160deg, #3a71a1, #6a4021 55%, #24140e);
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      .table::before {
+        content: "";
+        position: absolute;
+        inset: 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 229, 168, 0.16);
+        pointer-events: none;
       }
 
-      .portrait::before,
-      .portrait::after {
+      .enemy-lane,
+      .friendly-lane {
+        position: relative;
+        display: grid;
+        place-items: center;
+        z-index: 1;
+      }
+
+      .enemy-hero {
+        width: min(260px, 76vw);
+        display: grid;
+        place-items: center;
+        gap: 8px;
+        position: relative;
+      }
+
+      .enemy-portrait {
+        width: 156px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        border: 5px solid #e4b966;
+        background:
+          radial-gradient(circle at 43% 35%, #ffdfb8 0 11%, transparent 12%),
+          radial-gradient(circle at 58% 35%, #ffdfb8 0 11%, transparent 12%),
+          radial-gradient(circle at 50% 59%, #402311 0 13%, transparent 14%),
+          linear-gradient(145deg, #7d8791, #332922 62%, #170f0d);
+        box-shadow:
+          0 14px 34px rgba(0, 0, 0, 0.46),
+          0 0 0 10px rgba(77, 45, 18, 0.6);
+        position: relative;
+        transition:
+          transform 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      .enemy-portrait.targeted {
+        transform: scale(1.05);
+        box-shadow:
+          0 0 0 10px rgba(255, 76, 42, 0.28),
+          0 0 52px rgba(255, 87, 43, 0.72);
+      }
+
+      .enemy-portrait.hit {
+        animation: enemy-hit 260ms ease;
+      }
+
+      @keyframes enemy-hit {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-9px);
+        }
+        55% {
+          transform: translateX(8px);
+        }
+      }
+
+      .enemy-title {
+        width: 220px;
+        text-align: center;
+        padding: 8px 14px;
+        border: 1px solid rgba(255, 226, 159, 0.32);
+        background: linear-gradient(180deg, #4d2e16, #21130b);
+        font-weight: 900;
+      }
+
+      .health-gem {
+        position: absolute;
+        right: 30px;
+        bottom: 30px;
+        width: 64px;
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        border: 3px solid #ffd46d;
+        background:
+          radial-gradient(circle at 35% 32%, #ffb4a6, transparent 32%),
+          linear-gradient(145deg, #cf2032, #630713);
+        color: white;
+        font-size: 24px;
+        font-weight: 950;
+      }
+
+      .health-track {
+        width: min(510px, calc(100% - 42px));
+        height: 18px;
+        position: absolute;
+        bottom: 14px;
+        border: 1px solid rgba(255, 223, 154, 0.28);
+        background: rgba(40, 13, 12, 0.72);
+        overflow: hidden;
+      }
+
+      .health-fill {
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(90deg, #be162b, #ff7d34);
+        transition: width 240ms ease;
+      }
+
+      .friendly-lane {
+        grid-template-columns: 1fr minmax(220px, 300px) 1fr;
+        align-items: center;
+      }
+
+      .minion-card {
+        grid-column: 2;
+        width: 230px;
+        min-height: 310px;
+        border-radius: 17px;
+        border: 4px solid #c8953d;
+        background:
+          radial-gradient(circle at 50% 28%, #ffeeaf 0 10%, transparent 11%),
+          radial-gradient(circle at 50% 30%, #4aa0d5 0 26%, transparent 27%),
+          linear-gradient(165deg, #263d58, #6b3517 56%, #20120c);
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+        position: relative;
+        display: grid;
+        place-items: end center;
+        padding: 18px;
+        transition:
+          transform 220ms ease,
+          box-shadow 220ms ease;
+      }
+
+      .minion-card::before,
+      .minion-card::after {
         content: "";
         position: absolute;
         border-radius: 999px;
       }
 
-      .portrait::before {
-        width: 44%;
-        height: 28%;
-        top: 15%;
-        background: #f4d59a;
+      .minion-card::before {
+        width: 90px;
+        height: 58px;
+        top: 70px;
+        background: #f5d79b;
         box-shadow:
-          -42px 22px 0 -14px #f4d59a,
-          42px 22px 0 -14px #f4d59a;
+          -42px 30px 0 -19px #f5d79b,
+          42px 30px 0 -19px #f5d79b;
       }
 
-      .portrait::after {
-        width: 68%;
-        height: 26%;
-        bottom: 15%;
-        background: linear-gradient(90deg, #e9ba58, #fff0ad, #e9ba58);
-        opacity: 0.95;
+      .minion-card::after {
+        width: 140px;
+        height: 46px;
+        top: 170px;
+        background: linear-gradient(90deg, #db9a38, #fff2b4, #db9a38);
+      }
+
+      .minion-card.trigger {
+        animation: antonidas-trigger 540ms ease;
+      }
+
+      @keyframes antonidas-trigger {
+        0% {
+          transform: translateY(0) scale(1);
+          box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+        }
+        44% {
+          transform: translateY(-10px) scale(1.04);
+          box-shadow:
+            0 0 0 10px rgba(79, 188, 255, 0.22),
+            0 0 64px rgba(112, 207, 255, 0.82);
+        }
+        100% {
+          transform: translateY(0) scale(1);
+          box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+        }
       }
 
       .minion-name {
-        position: absolute;
-        bottom: 20px;
-        left: 18px;
-        right: 18px;
-        text-align: center;
-        padding: 9px 10px;
-        border: 1px solid rgba(255, 241, 198, 0.32);
-        background: rgba(23, 17, 12, 0.82);
-        font-weight: 800;
-      }
-
-      .side {
-        display: grid;
-        grid-template-rows: auto 1fr;
-      }
-
-      .enemy {
-        padding: 22px;
-        border-bottom: 1px solid rgba(255, 241, 198, 0.16);
-      }
-
-      .enemy-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-      }
-
-      .enemy h2 {
-        margin: 0;
-        font-size: clamp(24px, 4vw, 48px);
-        letter-spacing: 0;
-      }
-
-      .health {
-        display: grid;
-        place-items: center;
-        width: 88px;
-        aspect-ratio: 1;
-        border-radius: 50%;
-        background:
-          radial-gradient(circle at 35% 35%, #ffb0a1, transparent 32%),
-          linear-gradient(145deg, #b3192b, #5c0811);
-        border: 3px solid #f1c46d;
-        font-size: 30px;
-        font-weight: 900;
-        box-shadow: 0 12px 28px rgba(94, 5, 12, 0.45);
-      }
-
-      .bar {
-        height: 18px;
-        margin-top: 18px;
-        border: 1px solid rgba(255, 241, 198, 0.24);
-        background: #2d1918;
-        overflow: hidden;
-      }
-
-      .bar-fill {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, #dc2d3c, #ff9b3d);
-        transition: width 180ms ease;
-      }
-
-      .activity {
-        display: grid;
-        grid-template-columns: 1fr minmax(190px, 250px);
-        gap: 16px;
-        padding: 22px;
-      }
-
-      .spell-zone {
-        min-height: 210px;
-        display: grid;
-        place-items: center;
-        border: 1px dashed rgba(255, 241, 198, 0.22);
-        background:
-          radial-gradient(circle, rgba(251, 101, 31, 0.18), transparent 52%),
-          rgba(247, 184, 77, 0.04);
         position: relative;
-        overflow: hidden;
+        z-index: 1;
+        width: 100%;
+        padding: 10px 8px;
+        text-align: center;
+        border: 1px solid rgba(255, 239, 188, 0.34);
+        background: rgba(24, 15, 9, 0.84);
+        font-weight: 900;
       }
 
-      .blast {
-        width: 132px;
-        aspect-ratio: 1;
-        border-radius: 50%;
-        transform: scale(0.35);
-        opacity: 0;
-        background:
-          radial-gradient(circle at 45% 40%, #fff6b7 0 12%, #ffb23e 13% 42%, #db351e 43% 68%, transparent 69%),
-          conic-gradient(from 10deg, #ffef8a, #f04a24, #ffb23e, #ffef8a);
-      }
-
-      .blast.active {
-        animation: blast 260ms ease-out;
-      }
-
-      @keyframes blast {
-        0% {
-          opacity: 0;
-          transform: scale(0.3);
-        }
-        45% {
-          opacity: 1;
-          transform: scale(1.1);
-        }
-        100% {
-          opacity: 0;
-          transform: scale(1.7);
-        }
-      }
-
-      .log {
-        min-height: 210px;
+      .history {
+        position: absolute;
+        right: 20px;
+        bottom: 24px;
+        width: min(280px, calc(100% - 40px));
+        max-height: 150px;
         padding: 12px;
-        border: 1px solid rgba(255, 241, 198, 0.16);
-        background: rgba(6, 8, 7, 0.34);
+        border: 1px solid rgba(255, 226, 159, 0.22);
+        background: rgba(16, 11, 7, 0.54);
         overflow: hidden;
       }
 
-      .log-line {
-        margin: 0 0 8px;
+      .history p {
+        margin-bottom: 7px;
         font-size: 13px;
         line-height: 1.35;
       }
 
-      .hand {
+      .hand-row {
         display: grid;
-        grid-template-columns: minmax(220px, 280px) 1fr auto;
-        gap: 16px;
-        align-items: center;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: end;
+        min-height: 230px;
+        position: relative;
       }
 
-      .card {
-        min-height: 240px;
-        border: 3px solid #e3b65f;
+      .hand-slot {
+        grid-column: 2;
+        width: 174px;
+        height: 230px;
+        position: relative;
+        display: grid;
+        place-items: center;
+      }
+
+      .spell-card,
+      .flying-card {
+        width: 156px;
+        height: 214px;
+        border-radius: 15px;
+        border: 4px solid #d59b45;
         background:
-          radial-gradient(circle at 50% 32%, #fff3a6 0 10%, #fa8d2f 11% 34%, transparent 35%),
-          linear-gradient(160deg, #8f1f16, #412118 62%, #17110e);
-        padding: 16px;
+          radial-gradient(circle at 50% 30%, #fff6b0 0 11%, #ff9a32 12% 31%, transparent 32%),
+          radial-gradient(circle at 50% 33%, rgba(255, 74, 31, 0.7), transparent 43%),
+          linear-gradient(160deg, #7b1515, #31140f 64%, #160d0a);
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.48);
         display: grid;
-        grid-template-rows: auto 1fr auto;
-        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42);
+        grid-template-rows: 42px 1fr auto;
+        padding: 10px;
+        touch-action: none;
       }
 
-      .cost {
-        width: 44px;
+      .spell-card {
+        cursor: grab;
+        transform-origin: 50% 92%;
+        transition:
+          transform 170ms ease,
+          filter 170ms ease,
+          opacity 130ms ease;
+      }
+
+      .spell-card:hover {
+        transform: translateY(-8px) rotate(-1deg);
+        filter: brightness(1.08);
+      }
+
+      .spell-card.dragging {
+        opacity: 0.2;
+      }
+
+      .spell-card.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .mana {
+        width: 38px;
         aspect-ratio: 1;
         display: grid;
         place-items: center;
         border-radius: 50%;
-        color: #0e1822;
-        background: linear-gradient(145deg, #9ee3ff, #2d79c4);
-        font-weight: 900;
-        font-size: 24px;
-        border: 2px solid #e8fbff;
+        border: 2px solid #dff8ff;
+        background: linear-gradient(145deg, #9fe8ff, #2375bf);
+        color: #101822;
+        font-size: 23px;
+        font-weight: 950;
       }
 
-      .card h2 {
+      .spell-name {
         align-self: end;
         margin: 0;
-        font-size: 30px;
+        font-size: 26px;
+        line-height: 1;
+        font-weight: 950;
       }
 
-      .card small {
-        font-size: 14px;
+      .spell-text {
+        margin: 8px 0 0;
+        color: #f4d99b;
+        font-size: 12px;
+        line-height: 1.25;
       }
 
-      .controls {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
+      .target-line {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 4px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #ffdd61, #ff3d24);
+        transform-origin: 0 50%;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 20;
+        box-shadow: 0 0 18px rgba(255, 83, 42, 0.72);
       }
 
-      .primary,
-      .secondary {
-        min-height: 48px;
-        border: 0;
+      .target-line.active {
+        opacity: 1;
+      }
+
+      .drag-ghost,
+      .projectile,
+      .flying-card {
+        position: fixed;
+        left: 0;
+        top: 0;
+        pointer-events: none;
+        z-index: 30;
+      }
+
+      .drag-ghost {
+        opacity: 0.96;
+        transform: translate(-50%, -50%) rotate(-4deg) scale(1.08);
+      }
+
+      .projectile {
+        width: 58px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 42% 36%, #fff9b2 0 15%, #ffb031 16% 44%, #ef3b20 45% 72%, transparent 73%),
+          conic-gradient(#ffef8a, #f04122, #ffb13a, #ffef8a);
+        filter: drop-shadow(0 0 18px rgba(255, 91, 40, 0.82));
+      }
+
+      .impact {
+        position: fixed;
+        width: 160px;
+        aspect-ratio: 1;
+        left: 0;
+        top: 0;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 26;
+        background:
+          radial-gradient(circle, rgba(255, 247, 158, 0.95) 0 9%, rgba(255, 129, 43, 0.9) 10% 34%, rgba(220, 41, 26, 0.42) 35% 60%, transparent 61%);
+        transform: translate(-50%, -50%) scale(0.35);
+        animation: impact 360ms ease-out forwards;
+      }
+
+      @keyframes impact {
+        to {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.45);
+        }
+      }
+
+      .flying-card {
+        transform: translate(-50%, -50%) scale(0.56);
+        opacity: 0.95;
+      }
+
+      .reset {
+        justify-self: end;
+        min-height: 44px;
         padding: 0 18px;
+        border: 1px solid rgba(255, 223, 154, 0.28);
+        color: #fff2d2;
+        background: rgba(18, 13, 8, 0.72);
         cursor: pointer;
         font-weight: 800;
       }
 
-      .primary {
-        color: #27130d;
-        background: linear-gradient(180deg, #ffd36b, #f27a22);
-      }
-
-      .secondary {
-        color: #f8f1df;
-        background: rgba(255, 255, 255, 0.12);
-        border: 1px solid rgba(255, 241, 198, 0.2);
-      }
-
-      .primary:disabled,
-      .secondary:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-      }
-
-      @media (max-width: 760px) {
+      @media (max-width: 820px) {
         .game {
-          padding: 14px;
+          padding: 10px;
         }
 
-        .topbar,
-        .board,
-        .hand,
-        .activity {
-          grid-template-columns: 1fr;
+        .hud {
+          display: grid;
+          gap: 10px;
         }
 
-        .topbar,
-        .enemy-head {
-          align-items: flex-start;
-        }
-
-        .topbar,
-        .enemy-head,
-        .controls {
-          flex-direction: column;
-        }
-
-        .metrics {
+        .stats {
           justify-content: stretch;
-          width: 100%;
         }
 
-        .metric {
+        .stat {
           flex: 1;
+          min-width: 82px;
         }
 
-        .hero,
-        .side {
-          min-height: auto;
+        .table {
+          min-height: 560px;
+          grid-template-rows: 188px 1fr;
         }
 
-        .hand {
-          align-items: stretch;
+        .enemy-portrait {
+          width: 132px;
+        }
+
+        .friendly-lane {
+          grid-template-columns: 1fr;
+          padding-bottom: 104px;
+        }
+
+        .minion-card {
+          width: 202px;
+          min-height: 282px;
+        }
+
+        .history {
+          left: 14px;
+          right: 14px;
+          bottom: 12px;
+          width: auto;
+          max-height: 92px;
+        }
+
+        .hand-row {
+          grid-template-columns: 1fr auto;
+          gap: 12px;
+          min-height: 216px;
+        }
+
+        .hand-slot {
+          grid-column: 1;
+          justify-self: center;
+          width: 148px;
+          height: 206px;
+        }
+
+        .spell-card,
+        .flying-card {
+          width: 140px;
+          height: 194px;
+        }
+
+        .reset {
+          grid-column: 2;
+          align-self: center;
         }
       }
     </style>
   </head>
   <body>
     <main class="game">
-      <header class="topbar">
-        <div class="title">
-          <p>Zero-cost spell loop</p>
-          <h1>Fireball vs 600 Health</h1>
+      <header class="hud">
+        <div class="brand">
+          <p>Arcane combo board</p>
+          <h1>Fireball Loop</h1>
         </div>
-        <div class="metrics">
-          <div class="metric">
+        <div class="stats" aria-label="Game stats">
+          <div class="stat">
             <strong id="casts">0</strong>
-            <span>spells cast</span>
+            <span>casts</span>
           </div>
-          <div class="metric">
+          <div class="stat">
             <strong id="damage">0</strong>
-            <span>damage dealt</span>
+            <span>damage</span>
           </div>
-          <div class="metric">
-            <strong id="needed">100</strong>
-            <span>fireballs needed</span>
+          <div class="stat">
+            <strong id="remaining">100</strong>
+            <span>left</span>
           </div>
         </div>
       </header>
 
-      <section class="board" aria-label="Game board">
-        <div class="hero">
-          <div class="portrait" aria-hidden="true"></div>
-          <div class="minion-name">Archmage Antonidas</div>
-        </div>
+      <section class="table" aria-label="Card battle board">
+        <section class="enemy-lane">
+          <div class="enemy-hero">
+            <div class="enemy-portrait" id="enemyPortrait" aria-label="Opponent hero"></div>
+            <div class="enemy-title">Training Dummy</div>
+            <div class="health-gem" id="health">600</div>
+          </div>
+          <div class="health-track" aria-hidden="true">
+            <div class="health-fill" id="healthFill"></div>
+          </div>
+        </section>
 
-        <div class="side">
-          <section class="enemy" aria-label="Opponent">
-            <div class="enemy-head">
-              <div>
-                <p>Opponent hero</p>
-                <h2>Training Dummy</h2>
-              </div>
-              <div class="health" id="health">600</div>
-            </div>
-            <div class="bar" aria-hidden="true">
-              <div class="bar-fill" id="healthBar"></div>
-            </div>
-          </section>
-
-          <section class="activity">
-            <div class="spell-zone" aria-label="Spell animation">
-              <div class="blast" id="blast"></div>
-            </div>
-            <div class="log" id="log" aria-live="polite">
-              <p class="log-line">Archmage Antonidas is ready.</p>
-              <p class="log-line">Cast Fireball to deal 6 damage.</p>
-            </div>
-          </section>
-        </div>
+        <section class="friendly-lane">
+          <article class="minion-card" id="antonidas">
+            <div class="minion-name">Archmage Antonidas</div>
+          </article>
+          <aside class="history" id="history" aria-live="polite">
+            <p>Archmage Antonidas is in play.</p>
+          </aside>
+        </section>
       </section>
 
-      <section class="hand" aria-label="Hand">
-        <article class="card">
-          <div class="cost">0</div>
-          <h2>Fireball</h2>
-          <small>Deal 6 damage. Antonidas adds another Fireball to your hand.</small>
-        </article>
-        <div class="controls">
-          <button class="primary" id="castButton">Cast Fireball</button>
-          <button class="secondary" id="autoButton">Auto Cast</button>
-          <button class="secondary" id="resetButton">Reset</button>
-        </div>
-        <div class="metric">
-          <strong id="handCount">1</strong>
-          <span>fireballs in hand</span>
-        </div>
+      <section class="hand-row" aria-label="Player hand">
+        <div class="hand-slot" id="handSlot"></div>
+        <button class="reset" id="resetButton">Reset</button>
       </section>
+
+      <div class="target-line" id="targetLine"></div>
     </main>
+
+    <template id="fireballTemplate">
+      <article class="spell-card" data-card="fireball" aria-label="Fireball card">
+        <div class="mana">0</div>
+        <h2 class="spell-name">Fireball</h2>
+        <p class="spell-text">Deal 6 damage.</p>
+      </article>
+    </template>
 
     <script>
       const maxHealth = 600;
@@ -492,128 +640,268 @@
         health: maxHealth,
         casts: 0,
         damage: 0,
-        hand: 1,
-        autoTimer: null,
-        defeatedLogged: false,
+        locked: false,
       };
 
       const elements = {
-        health: document.getElementById("health"),
-        healthBar: document.getElementById("healthBar"),
         casts: document.getElementById("casts"),
         damage: document.getElementById("damage"),
-        needed: document.getElementById("needed"),
-        handCount: document.getElementById("handCount"),
-        castButton: document.getElementById("castButton"),
-        autoButton: document.getElementById("autoButton"),
+        remaining: document.getElementById("remaining"),
+        health: document.getElementById("health"),
+        healthFill: document.getElementById("healthFill"),
+        enemyPortrait: document.getElementById("enemyPortrait"),
+        antonidas: document.getElementById("antonidas"),
+        history: document.getElementById("history"),
+        handSlot: document.getElementById("handSlot"),
+        targetLine: document.getElementById("targetLine"),
         resetButton: document.getElementById("resetButton"),
-        log: document.getElementById("log"),
-        blast: document.getElementById("blast"),
+        template: document.getElementById("fireballTemplate"),
       };
 
-      function addLog(text) {
-        const line = document.createElement("p");
-        line.className = "log-line";
-        line.textContent = text;
-        elements.log.prepend(line);
+      function makeCard(extraClass = "") {
+        const card = elements.template.content.firstElementChild.cloneNode(true);
+        if (extraClass) {
+          card.classList.add(extraClass);
+        }
+        return card;
+      }
 
-        while (elements.log.children.length > 7) {
-          elements.log.lastElementChild.remove();
+      function centerOf(element) {
+        const rect = element.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        };
+      }
+
+      function isPointInElement(point, element) {
+        const rect = element.getBoundingClientRect();
+        return (
+          point.x >= rect.left &&
+          point.x <= rect.right &&
+          point.y >= rect.top &&
+          point.y <= rect.bottom
+        );
+      }
+
+      function addHistory(text) {
+        const line = document.createElement("p");
+        line.textContent = text;
+        elements.history.prepend(line);
+
+        while (elements.history.children.length > 6) {
+          elements.history.lastElementChild.remove();
         }
       }
 
-      function updateView() {
-        elements.health.textContent = state.health;
+      function updateStats() {
         elements.casts.textContent = state.casts;
         elements.damage.textContent = state.damage;
-        elements.handCount.textContent = state.hand;
-        elements.needed.textContent = Math.ceil(state.health / fireballDamage);
-        elements.healthBar.style.width = `${(state.health / maxHealth) * 100}%`;
-
-        const defeated = state.health <= 0;
-        elements.castButton.disabled = defeated;
-        elements.autoButton.disabled = defeated;
-        elements.autoButton.textContent = state.autoTimer ? "Stop Auto" : "Auto Cast";
-
-        if (defeated) {
-          stopAuto();
-          if (!state.defeatedLogged) {
-            state.defeatedLogged = true;
-            addLog("Opponent defeated.");
-          }
-        }
+        elements.health.textContent = state.health;
+        elements.remaining.textContent = Math.ceil(state.health / fireballDamage);
+        elements.healthFill.style.width = `${(state.health / maxHealth) * 100}%`;
       }
 
-      function animateBlast() {
-        elements.blast.classList.remove("active");
-        void elements.blast.offsetWidth;
-        elements.blast.classList.add("active");
+      function drawTargetLine(from, to) {
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const length = Math.hypot(dx, dy);
+        const angle = Math.atan2(dy, dx);
+
+        elements.targetLine.style.transform = `translate(${from.x}px, ${from.y}px) rotate(${angle}rad)`;
+        elements.targetLine.style.width = `${length}px`;
       }
 
-      function castFireball() {
-        if (state.health <= 0 || state.hand < 1) {
+      function clearTargetLine() {
+        elements.targetLine.classList.remove("active");
+      }
+
+      function animateElement(element, frames, options) {
+        return element.animate(frames, options).finished.catch(() => {});
+      }
+
+      async function animateProjectile(from, to) {
+        const projectile = document.createElement("div");
+        projectile.className = "projectile";
+        projectile.style.transform = `translate(${from.x - 29}px, ${from.y - 29}px) scale(0.65)`;
+        document.body.append(projectile);
+
+        await animateElement(
+          projectile,
+          [
+            { transform: `translate(${from.x - 29}px, ${from.y - 29}px) scale(0.65)` },
+            { transform: `translate(${to.x - 29}px, ${to.y - 29}px) scale(1.16)` },
+          ],
+          { duration: 330, easing: "cubic-bezier(.18,.82,.26,1)" },
+        );
+
+        projectile.remove();
+      }
+
+      function showImpact(point) {
+        const impact = document.createElement("div");
+        impact.className = "impact";
+        impact.style.transform = `translate(${point.x}px, ${point.y}px) scale(0.35)`;
+        impact.style.left = `${point.x}px`;
+        impact.style.top = `${point.y}px`;
+        document.body.append(impact);
+        window.setTimeout(() => impact.remove(), 390);
+      }
+
+      async function conjureFireball() {
+        elements.antonidas.classList.remove("trigger");
+        void elements.antonidas.offsetWidth;
+        elements.antonidas.classList.add("trigger");
+
+        const from = centerOf(elements.antonidas);
+        const to = centerOf(elements.handSlot);
+        const flying = makeCard("flying-card");
+        flying.style.transform = `translate(${from.x}px, ${from.y}px) scale(0.45) rotate(8deg)`;
+        document.body.append(flying);
+
+        await animateElement(
+          flying,
+          [
+            { transform: `translate(${from.x}px, ${from.y}px) scale(0.45) rotate(8deg)`, opacity: 0.25 },
+            { transform: `translate(${to.x}px, ${to.y}px) scale(0.96) rotate(0deg)`, opacity: 1 },
+          ],
+          { duration: 430, easing: "cubic-bezier(.2,.78,.2,1)" },
+        );
+
+        flying.remove();
+        renderCard();
+        addHistory("Antonidas added a Fireball.");
+      }
+
+      async function castFireball(origin) {
+        if (state.locked || state.health <= 0) {
           return;
         }
 
-        state.hand -= 1;
-        state.casts += 1;
+        state.locked = true;
+        const target = centerOf(elements.enemyPortrait);
+        await animateProjectile(origin, target);
+
         const damage = Math.min(fireballDamage, state.health);
-        state.damage += damage;
         state.health -= damage;
-        state.hand += 1;
+        state.damage += damage;
+        state.casts += 1;
+        updateStats();
 
-        animateBlast();
-        addLog(`Fireball ${state.casts}: ${damage} damage. Antonidas adds a new Fireball.`);
-        updateView();
-      }
+        elements.enemyPortrait.classList.remove("hit");
+        void elements.enemyPortrait.offsetWidth;
+        elements.enemyPortrait.classList.add("hit");
+        showImpact(target);
+        addHistory(`Fireball hit for ${damage}.`);
 
-      function startAuto() {
-        if (state.autoTimer || state.health <= 0) {
+        if (state.health <= 0) {
+          addHistory("Opponent defeated.");
+          state.locked = false;
           return;
         }
 
-        castFireball();
-        state.autoTimer = window.setInterval(castFireball, 140);
-        updateView();
+        await conjureFireball();
+        state.locked = false;
       }
 
-      function stopAuto() {
-        if (!state.autoTimer) {
+      function renderCard() {
+        elements.handSlot.innerHTML = "";
+        if (state.health <= 0) {
           return;
         }
 
-        window.clearInterval(state.autoTimer);
-        state.autoTimer = null;
-        updateView();
+        const card = makeCard();
+        elements.handSlot.append(card);
+        bindDrag(card);
       }
 
-      function toggleAuto() {
-        if (state.autoTimer) {
-          stopAuto();
-          return;
+      function bindDrag(card) {
+        let ghost = null;
+        let origin = null;
+        let pointerId = null;
+
+        function moveGhost(point) {
+          ghost.style.transform = `translate(${point.x}px, ${point.y}px) translate(-50%, -50%) rotate(-4deg) scale(1.08)`;
+          drawTargetLine(origin, point);
+
+          elements.enemyPortrait.classList.toggle(
+            "targeted",
+            isPointInElement(point, elements.enemyPortrait),
+          );
         }
 
-        startAuto();
+        card.addEventListener("pointerdown", (event) => {
+          if (state.locked || state.health <= 0 || event.button !== 0) {
+            return;
+          }
+
+          pointerId = event.pointerId;
+          card.setPointerCapture(pointerId);
+          origin = centerOf(card);
+          ghost = card.cloneNode(true);
+          ghost.classList.add("drag-ghost");
+          document.body.append(ghost);
+          card.classList.add("dragging");
+          elements.targetLine.classList.add("active");
+          moveGhost({ x: event.clientX, y: event.clientY });
+        });
+
+        card.addEventListener("pointermove", (event) => {
+          if (!ghost || event.pointerId !== pointerId) {
+            return;
+          }
+
+          moveGhost({ x: event.clientX, y: event.clientY });
+        });
+
+        card.addEventListener("pointerup", async (event) => {
+          if (!ghost || event.pointerId !== pointerId) {
+            return;
+          }
+
+          const dropPoint = { x: event.clientX, y: event.clientY };
+          const hit = isPointInElement(dropPoint, elements.enemyPortrait);
+          ghost.remove();
+          ghost = null;
+          card.classList.remove("dragging");
+          clearTargetLine();
+          elements.enemyPortrait.classList.remove("targeted");
+
+          if (!hit) {
+            return;
+          }
+
+          card.classList.add("hidden");
+          elements.handSlot.innerHTML = "";
+          await castFireball(dropPoint);
+        });
+
+        card.addEventListener("pointercancel", () => {
+          if (ghost) {
+            ghost.remove();
+          }
+          ghost = null;
+          card.classList.remove("dragging");
+          elements.enemyPortrait.classList.remove("targeted");
+          clearTargetLine();
+        });
       }
 
       function resetGame() {
-        stopAuto();
         state.health = maxHealth;
         state.casts = 0;
         state.damage = 0;
-        state.hand = 1;
-        state.defeatedLogged = false;
-        elements.log.innerHTML = "";
-        addLog("Cast Fireball to deal 6 damage.");
-        addLog("Archmage Antonidas is ready.");
-        updateView();
+        state.locked = false;
+        elements.history.innerHTML = "";
+        addHistory("Archmage Antonidas is in play.");
+        updateStats();
+        renderCard();
       }
 
-      elements.castButton.addEventListener("click", castFireball);
-      elements.autoButton.addEventListener("click", toggleAuto);
       elements.resetButton.addEventListener("click", resetGame);
 
-      updateView();
+      updateStats();
+      renderCard();
     </script>
   </body>
 </html>
